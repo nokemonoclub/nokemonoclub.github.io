@@ -1,21 +1,84 @@
 ---
 layout: default
 ---
+
+<article style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #eee;">
+  <header style="margin-bottom: 30px; background: none; padding: 0; border: none; align-items: flex-start;">
+    <p style="font-size: 12px; color: #999; margin-bottom: 10px;">{{ page.date | date: "%Y.%m.%d" }} | {{ page.category }}</p>
+    <h1 style="margin: 0; font-size: 28px; letter-spacing: 0.5px;">{{ page.title }}</h1>
+  </header>
+
+  {% if page.thumbnail %}
+  <div style="margin-bottom: 30px;">
+    <img src="/assets/images/{{ page.thumbnail }}" alt="{{ page.title }}" style="width: 100%; border-radius: 4px;">
+  </div>
+  {% endif %}
+
+  <!-- IDを追加してJavaScriptから読み取れるようにしました -->
+  <div class="post-content" id="js-post-body" style="line-height: 1.8; font-size: 16px; color: #333;">
+    {{ content }}
+  </div>
+
+  <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee;">
+    <a href="/" style="font-size: 14px; color: #100c82; font-weight: bold; text-decoration: none;">← BACK TO HOME</a>
+  </footer>
+</article>
+
+<!-- プレイヤーを表示するための追加CSS -->
 <style>
-  /* 記事ページ専用のスタイル */
-  .menu a { font-size: 14px; color: gray; text-decoration: none; }
-  .article { background: white; padding: 25px; border-radius: 12px; }
-  .article img { width: 100%; border-radius: 10px; margin-bottom: 20px; }
-  h1 { font-size: 24px; margin-bottom: 10px; }
-  .date { color: gray; font-size: 13px; margin-bottom: 20px; }
-  p { line-height: 1.9; font-size: 16px; color: #333; margin-bottom: 20px; }
-  @media (max-width: 600px) { h1 { font-size: 20px; } .article { padding: 20px; } }
+  /* YouTube用（16:9の比率を維持） */
+  .embed-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 25px 0;
+    background: #000;
+    border-radius: 4px;
+  }
+  .embed-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  /* Spotify用 */
+  .spotify-container {
+    margin: 25px 0;
+    width: 100%;
+  }
 </style>
 
-<div class="menu">
-  <a href="/">← 記事一覧へ</a>
-</div>
+<!-- URLを検知してプレイヤーに書き換えるプログラム -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const postBody = document.getElementById('js-post-body');
+    if (!postBody) return;
 
-<div class="article">
-  {{ content }}
-</div>
+    const paragraphs = postBody.getElementsByTagName('p');
+
+    for (let p of paragraphs) {
+      const text = p.innerText.trim();
+      
+      // 1. YouTube自動変換
+      const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/;
+      const ytMatch = text.match(ytRegex);
+      if (ytMatch && text === ytMatch[0]) {
+        p.innerHTML = `<div class="embed-container"><iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe></div>`;
+        continue;
+      }
+
+      // 2. Spotify自動変換
+      const spRegex = /(?:https?:\/\/)?open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
+      const spMatch = text.match(spRegex);
+      if (spMatch && text === spMatch[0]) {
+        const type = spMatch[1];
+        const id = spMatch[2];
+        p.innerHTML = `<div class="spotify-container"><iframe src="https://open.spotify.com/embed/${type}/${id}" width="100%" height="152" frameBorder="0" allow="encrypted-media"></iframe></div>`;
+      }
+    }
+  });
+</script>

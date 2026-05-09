@@ -3,14 +3,27 @@ layout: default
 title: Home
 ---
 
-<a href="article1.html">
-  <div class="card">
-    <img src="のけものヘッダー_noteよう.jpg" alt="サムネイル">
-    <div class="card-content">
-      <div class="title">空想を捨てるため</div>
-      <div class="date">2026年4月11日</div>
-      <div class="excerpt">
-        </div>
+<div class="post-list">
+{% for post in site.posts %}
+
+  <a href="{{ post.url }}" class="card">
+
+    <div class="thumb">
+      {% if post.thumbnail %}
+        <img src="/assets/images/{{ post.thumbnail }}" alt="サムネイル">
+      {% endif %}
     </div>
-  </div>
-</a>
+    
+    <div class="card-content">
+      <div class="date">
+        {{ post.date | date: "%Y年%m月%d日" }}
+      </div>
+      <div class="title">
+        {{ post.title }}
+      </div>
+    </div>
+
+  </a>
+
+{% endfor %}
+</div>

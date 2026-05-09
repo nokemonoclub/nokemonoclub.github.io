@@ -1,37 +1,253 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" style="background-color: #f7f7f7;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }} | NOKEMONO CLUB</title>
 
+  <!-- 1. フラッシュ・残像対策：CSS読み込み前でも背景色を固定 -->
   <style>
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial; background: #f7f7f7; }
-    header { background: white; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-weight: bold; font-size: 20px; }
-    .menu { font-size: 14px; color: gray; }
-    .container { max-width: 680px; margin: 20px auto; padding: 0 15px; }
-    .card { display: flex; background: white; margin-bottom: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; }
-    .card:hover { transform: translateY(-2px); }
-    .card img { width: 120px; object-fit: cover; }
-    .card-content { padding: 15px; flex: 1; }
-    .title { font-size: 18px; margin-bottom: 8px; }
-    .date { font-size: 12px; color: gray; margin-bottom: 8px; }
-    .excerpt { font-size: 14px; color: #444; }
-    a { text-decoration: none; color: black; }
-    @media (max-width: 600px) { .card { flex-direction: column; } .card img { width: 100%; height: 180px; } }
+    html, body { 
+      background-color: #f7f7f7 !important; 
+      margin: 0; 
+      padding: 0; 
+    }
+    /* 遷移時のチラつきを抑えるための微細なフェード */
+    body { opacity: 0; }
+    body.is-visible { 
+      opacity: 1 !important; 
+      transition: opacity 0.1s ease-in !important; 
+    }
+  </style>
+
+  <style>
+    /* ===== 基本スタイル ===== */
+    body { font-family: -apple-system, sans-serif; color: #333; line-height: 1.7; }
+    
+    /* ===== ヘッダー ===== */
+    header { background: #1a178f; padding: 60px 20px; text-align: center; }
+    .header-logo-img { max-width: 600px; width: 100%; height: auto; display: block; margin: 0 auto; border: none; }
+    header a { text-decoration: none; outline: none; -webkit-tap-highlight-color: transparent; }
+
+    /* ヘッダー下のテキストエリア */
+    .header-caption {
+      text-align: center; 
+      padding: 30px 20px; 
+      background: #1a178f; 
+      color: #fff; 
+      letter-spacing: 0.1em;
+    }
+    .header-caption p { 
+      margin: 0; 
+      opacity: 0.8; 
+      font-size: 18px; 
+      line-height: 1.4;
+    }
+
+    /* ===== レイアウト共通 ===== */
+    .main-wrapper { max-width: 1100px; margin: 0 auto; padding: 40px 20px; display: flex; gap: 50px; }
+    .content-area { flex: 1; max-width: 700px; min-width: 0; }
+    
+    /* 記事一覧カード（HOME/MUSIC/BLOG） */
+    .post-list { display: flex; flex-direction: column; gap: 20px; }
+    .card { 
+      display: flex; align-items: center; gap: 20px; background: #fff; padding: 20px; 
+      border-radius: 8px; text-decoration: none; color: inherit; border: 1px solid #eee; transition: 0.2s; 
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    
+    /* サムネイル画像の固定（ぐちゃぐちゃ防止） */
+    .thumb { width: 100px; height: 100px; flex-shrink: 0; overflow: hidden; border-radius: 4px; background: #eee; }
+    .card .thumb img { 
+      width: 100% !important; 
+      height: 100% !important; 
+      object-fit: cover !important; 
+      margin: 0 !important; 
+      display: block !important; 
+    }
+
+    /* ===== 記事本文エリア（個別記事） ===== */
+    .post-inner { background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
+    
+    /* 記事本文内の画像はみ出し防止 */
+    .post-inner img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+      border-radius: 4px;
+    }
+
+    /* 見出し装飾 */
+    .post-inner h2 { 
+      font-size: 24px; 
+      border-left: 6px solid #1a178f; 
+      padding: 5px 15px; 
+      margin: 30px 0 20px; 
+      letter-spacing: 0.05em; 
+      line-height: 1.4;
+    }
+    .post-inner h3 { 
+      font-size: 20px; 
+      border-bottom: 2px solid #eee; 
+      padding-bottom: 8px; 
+      margin: 25px 0 15px; 
+      color: #444; 
+    }
+
+    /* ===== サイドバー ===== */
+    .sidebar { flex: 0 0 250px; }
+    .sidebar-section { margin-bottom: 40px; }
+    .sidebar-title { font-size: 11px; color: #999; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; letter-spacing: 0.1em; }
+    .nav-list { list-style: none; padding: 0; margin: 0; font-weight: bold; }
+    .nav-list li { margin-bottom: 10px; }
+    .nav-list a { text-decoration: none; color: #333; }
+    .discord-img { width: 100%; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+    /* 埋め込みプレイヤー共通コンテナ */
+    .embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; background: #000; border-radius: 4px; }
+    .embed-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    
+    @media (max-width: 900px) { 
+      .main-wrapper { flex-direction: column; } 
+      .sidebar { width: 100%; } 
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">NOKEMONO CLUB</div>
-  <div class="menu">記事一覧</div>
-</header>
+  <header>
+    <a href="/"><img src="/assets/images/のけものヘッダー4.png" alt="nokemono club" class="header-logo-img"></a>
+  </header>
 
-<div class="container">
-  {{ content }}
-</div>
+  <div class="header-caption">
+    <p>あなたのための音楽紹介サイト</p>
+  </div>
 
+  <div class="main-wrapper">
+    <main class="content-area">
+      {% if page.url == "/" or page.url == "/music.html" or page.url == "/blog.html" %}
+        <!-- 一覧ページ表示 -->
+        <div class="post-list">
+          {% for post in site.posts %}
+            {% if page.url == "/" or post.category == page.category or post.tags contains page.tag %}
+            <a href="{{ post.url }}" class="card">
+              <div class="thumb">
+                <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
+              </div>
+              <div class="card-content">
+                <div class="date">{{ post.date | date: "%Y.%m.%d" }}</div>
+                <div class="title">{{ post.title }}</div>
+              </div>
+            </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- 個別記事ページ表示 -->
+        <article class="post-inner" id="js-post-body">
+          
+          <!-- 記事冒頭のサムネイル画像を表示 -->
+          {% if page.thumbnail %}
+            <div style="width: 100%; margin-bottom: 30px; overflow: hidden; border-radius: 8px;">
+              <img src="/assets/images/{{ page.thumbnail }}" alt="{{ page.title }}" style="width: 100%; height: auto; object-fit: cover; margin: 0;">
+            </div>
+          {% endif %}
+
+          <!-- タイトルと日付 -->
+          {% if page.title %}
+            <h2 style="margin-top: 0; border-left: none; padding-left: 0;">{{ page.title }}</h2>
+            <div style="font-size: 12px; color: #999; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px;">{{ page.date | date: "%Y.%m.%d" }}</div>
+          {% endif %}
+          
+          <!-- 記事本文 -->
+          <div class="entry-content">
+            {{ content }}
+          </div>
+
+          <!-- 記事末尾のナビゲーション（BACK TO HOME） -->
+          <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+            <a href="/" style="text-decoration: none; color: #1a178f; font-weight: bold; font-size: 14px; letter-spacing: 0.1em;">
+              &larr; BACK TO HOME
+            </a>
+          </div>
+        </article>
+      {% endif %}
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">NAVIGATION</div>
+        <ul class="nav-list">
+          <li><a href="/">HOME</a></li>
+          <li><a href="/music.html">MUSIC / 音楽</a></li>
+          <li><a href="/blog.html">BLOG / 雑記</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">COMMUNITY</div>
+        <a href="https://discord.gg/8u7FwVwpws" target="_blank">
+          <img src="/assets/images/discord-invite.jpg" class="discord-img" alt="Discord">
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    /* 表示制御：チラつき・残像対策 */
+    (function() {
+      var reveal = function() { document.body.classList.add('is-visible'); };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', reveal);
+      } else {
+        reveal();
+      }
+      window.addEventListener('pageshow', function(e) {
+        reveal();
+        if (e.persisted) { window.location.reload(); }
+      });
+    })();
+
+    /* プレイヤー変換ロジック：YouTube, Spotify, SoundCloud */
+    window.playYoutube = function(element, videoId) {
+      const wrapper = element.parentElement;
+      wrapper.innerHTML = `<div class="embed-container"><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    };
+
+    const pb = document.getElementById('js-post-body');
+    if (pb) {
+      const ps = Array.from(pb.getElementsByTagName('p'));
+      ps.forEach(p => {
+        const t = p.innerText.trim();
+        if (!t) return;
+
+        // YouTube
+        const yt = t.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+        if (yt) {
+          p.innerHTML = `<div style="margin: 25px 0; position: relative; background: #000; border-radius: 8px; overflow: hidden; cursor: pointer; aspect-ratio: 16/9;" onclick="playYoutube(this, '${yt[1]}')"><img src="https://img.youtube.com/vi/${yt[1]}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg'" style="width: 100%; height: 100%; object-fit: cover;"><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: rgba(0,0,0,0.8); border-radius: 12%; display: flex; align-items: center; justify-content: center;"><div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 20px solid #fff; margin-left: 4px;"></div></div></div>`;
+          return;
+        }
+
+        // Spotify
+        const sp = t.match(/(?:https?:\/\/)?open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+        if (sp) {
+          p.innerHTML = `<div style="margin:20px 0;"><iframe src="https://open.spotify.com/embed/${sp[1]}/${sp[2]}" width="100%" height="152" frameBorder="0" allow="encrypted-media" style="border-radius:12px;"></iframe></div>`;
+          return;
+        }
+
+        // SoundCloud
+        const sc = t.match(/(?:https?:\/\/)?soundcloud\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+/);
+        if (sc && t === sc[0]) {
+          p.innerHTML = `<div style="margin:20px 0;"><iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(t)}&color=%231a178f"></iframe></div>`;
+          return;
+        }
+
+        // 一般的なURLのブログカード化
+        if (/^https?:\/\/[^\s]+$/.test(t)) {
+          p.innerHTML = `<div style="margin: 25px 0;"><a href="${t}" target="_blank" style="display: flex; align-items: center; border: 1px solid #eee; border-radius: 8px; text-decoration: none; color: inherit; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);"><div style="padding: 20px; flex: 1;"><div style="font-weight: bold; font-size: 14px; color: #1a178f; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t}</div><div style="font-size: 11px; color: #999;">${new URL(t).hostname}</div></div></a></div>`;
+        }
+      });
+    }
+  </script>
 </body>
 </html>
