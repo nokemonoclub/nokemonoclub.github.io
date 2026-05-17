@@ -30,7 +30,7 @@ thumbnail: Punishment_sisyph.jpg
 今回はそんな内省的な痛みを支える「Laget’s Jam Stack」を紹介させていただきます。
 
 
-### 立ち上がるために「Laget's Jam Stack」
+## 立ち上がるために「Laget's Jam Stack」
 
 「Laget’s Jam Stack」の楽曲は重々しい印象を抱きます。
 
