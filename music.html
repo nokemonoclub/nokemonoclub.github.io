@@ -1,28 +1,22 @@
 ---
 layout: default
-title: 音楽記事一覧
+title: MUSIC / 音楽
+is_layout_page: true
+category: music
 ---
 
-<h2 style="font-size: 14px; color: #999; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 20px;">CATEGORY: MUSIC</h2>
-
-{% for post in site.posts %}
-  {% if post.category == "音楽" %}
-    <a href="{{ post.url }}">
-      <div class="card" style="height: 120px; align-items: center; display: flex; background: white; margin-bottom: 20px; border-radius: 4px; overflow: hidden; border: 1px solid #eee;">
-        <div style="width: 150px; height: 120px; flex-shrink: 0;">
-          <img src="/assets/images/{{ post.thumbnail }}" alt="サムネイル" 
-               style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        
-        <div class="card-content" style="flex: 1; padding-left: 20px;">
-          <div class="date" style="font-size: 11px; color: #999; margin-bottom: 5px;">
-            {{ post.date | date: "%Y年%m月%d日" }}
-          </div>
-          <div class="title" style="font-size: 18px; font-weight: bold; color: #333;">
-            {{ post.title }}
-          </div>
-        </div>
+<div class="post-list">
+  {% for post in site.posts %}
+    {% if post.category == page.category or post.tags contains page.tag %}
+    <a href="{{ post.url }}" class="card">
+      <div class="thumb">
+        <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
+      </div>
+      <div class="card-content">
+        <div class="date">{{ post.date | date: "%Y.%m.%d" }}</div>
+        <div class="title">{{ post.title }}</div>
       </div>
     </a>
-  {% endif %}
-{% endfor %}
+    {% endif %}
+  {% endfor %}
+</div>
