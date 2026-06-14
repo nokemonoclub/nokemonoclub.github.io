@@ -2,21 +2,28 @@
 layout: default
 title: BLOG / 雑記
 is_layout_page: true
-category: blog
 ---
 
 <div class="post-list">
+  {% assign count = 0 %}
   {% for post in site.posts %}
-    {% if post.category == page.category or post.tags contains page.tag %}
-    <a href="{{ post.url }}" class="card">
-      <div class="thumb">
-        <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
-      </div>
-      <div class="card-content">
-        <div class="date">{{ post.date | date: "%Y.%m.%d" }}</div>
-        <div class="title">{{ post.title }}</div>
-      </div>
-    </a>
+    {% if post.category == "blog" or post.category == "Blog" or post.categories contains "blog" or post.categories contains "Blog" %}
+      {% assign count = count | plus: 1 %}
+      <a href="{{ post.url }}" class="card">
+        <div class="thumb">
+          <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
+        </div>
+        <div class="card-content">
+          <div class="date" style="font-size: 12px; color: #999; margin-bottom: 5px;">{{ post.date | date: "%Y.%m.%d" }}</div>
+          <div class="title" style="font-weight: bold; color: #333; font-size: 18px;">{{ post.title }}</div>
+        </div>
+      </a>
     {% endif %}
   {% endfor %}
+
+  {% if count == 0 %}
+    <p style="text-align: center; color: #999; padding: 40px 0; background: #fff; border-radius: 8px; border: 1px solid #eee;">
+      まだBLOGカテゴリの記事がありません。
+    </p>
+  {% endif %}
 </div>
