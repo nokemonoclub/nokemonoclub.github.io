@@ -18,7 +18,7 @@ github_username: nokemonoclub
 theme: minima
 plugins:
   - jekyll-feed
-
+  - jekyll-paginate
 # 記事のURL形式
 # 元の設定に合わせて .html を付与する形にしています
 permalink: /:title.html
@@ -32,3 +32,6 @@ exclude:
   - Gemfile.lock
   - .jekyll-cache/
   - .git/
+paginate: 5
+paginate_path: "/page:num/"
+
