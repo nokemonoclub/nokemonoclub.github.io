@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }} | NOKEMONO CLUB</title>
 
-  <!-- 1. フラッシュ・残像対策：CSS読み込み前でも背景色を固定 -->
   <style>
     html, body { 
       background-color: #f7f7f7 !important; 
@@ -126,11 +125,36 @@
 
   <div class="main-wrapper">
     <main class="content-area">
-      {% if page.url == "/" or page.url == "/music.html" or page.url == "/blog.html" %}
-        <!-- 一覧ページ表示 -->
+      {% if page.url == "/" %}
+        <div class="post-list">
+          {% for post in paginator.posts %}
+            <a href="{{ post.url }}" class="card">
+              <div class="thumb">
+                <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
+              </div>
+              <div class="card-content">
+                <div class="date">{{ post.date | date: "%Y.%m.%d" }}</div>
+                <div class="title">{{ post.title }}</div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+
+        {% if paginator.total_pages > 1 %}
+        <div style="text-align: center; margin-top: 40px;">
+          {% if paginator.previous_page %}
+            <a href="{{ paginator.previous_page_path }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">« 新しい記事</a>
+          {% endif %}
+          {% if paginator.next_page %}
+            <a href="{{ paginator.next_page_path }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">古い記事 »</a>
+          {% endif %}
+        </div>
+        {% endif %}
+
+      {% elsif page.url == "/music.html" or page.url == "/blog.html" %}
         <div class="post-list">
           {% for post in site.posts %}
-            {% if page.url == "/" or post.category == page.category or post.tags contains page.tag %}
+            {% if post.category == page.category or post.tags contains page.tag %}
             <a href="{{ post.url }}" class="card">
               <div class="thumb">
                 <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
@@ -144,31 +168,26 @@
           {% endfor %}
         </div>
       {% else %}
-        <!-- 個別記事ページ表示 -->
         <article class="post-inner" id="js-post-body">
           
-          <!-- 記事冒頭のサムネイル画像を表示 -->
           {% if page.thumbnail %}
             <div style="width: 100%; margin-bottom: 30px; overflow: hidden; border-radius: 8px;">
               <img src="/assets/images/{{ page.thumbnail }}" alt="{{ page.title }}" style="width: 100%; height: auto; object-fit: cover; margin: 0;">
             </div>
           {% endif %}
 
-          <!-- タイトルと日付 -->
           {% if page.title %}
             <h2 style="margin-top: 0; border-left: none; padding-left: 0;">{{ page.title }}</h2>
             <div style="font-size: 12px; color: #999; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px;">{{ page.date | date: "%Y.%m.%d" }}</div>
           {% endif %}
           
-          <!-- 記事本文 -->
           <div class="entry-content">
             {{ content }}
           </div>
 
-          <!-- 記事末尾のナビゲーション（BACK TO HOME） -->
           <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
             <a href="/" style="text-decoration: none; color: #1a178f; font-weight: bold; font-size: 14px; letter-spacing: 0.1em;">
-              &larr; BACK TO HOME
+              ← BACK TO HOME
             </a>
           </div>
         </article>
