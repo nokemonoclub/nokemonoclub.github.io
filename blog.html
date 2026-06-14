@@ -7,7 +7,7 @@ is_layout_page: true
 <div class="post-list">
   {% assign count = 0 %}
   {% for post in site.posts %}
-    {% if post.category == "blog" or post.category == "Blog" or post.categories contains "blog" or post.categories contains "Blog" %}
+    {% if post.category == "雑記" or post.category == "ブログ" or post.category == "blog" or post.category == "Blog" or post.categories contains "雑記" or post.categories contains "ブログ" or post.categories contains "blog" or post.categories contains "Blog" %}
       {% assign count = count | plus: 1 %}
       <a href="{{ post.url }}" class="card">
         <div class="thumb">
