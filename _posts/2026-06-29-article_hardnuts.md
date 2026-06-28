@@ -1,6 +1,6 @@
 ---
 layout: default
-title:
+title: 手に入ると思っていた青い季節「hardnuts」
 category: 音楽
 thumbnail: Richard_Gerstl_-_Lake_Traun_with_Mountain_Sleeping_Greek_Woman_-_Google_Art_Project.jpg
 ---
