@@ -5,7 +5,7 @@ is_layout_page: true
 ---
 
 <div class="post-list">
-  {% for post in paginator.posts %}
+  {% for post in site.posts %}
     <a href="{{ post.url }}" class="card">
       <div class="thumb">
         <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
@@ -17,14 +17,3 @@ is_layout_page: true
     </a>
   {% endfor %}
 </div>
-
-{% if paginator.total_pages > 1 %}
-<div style="text-align: center; margin-top: 40px;">
-  {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">« 新しい記事</a>
-  {% endif %}
-  {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">古い記事 »</a>
-  {% endif %}
-</div>
-{% endif %}
