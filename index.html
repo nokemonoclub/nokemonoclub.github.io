@@ -4,8 +4,9 @@ title: Home
 is_layout_page: true
 ---
 
+<!-- 5件ごとに区切られた現在の階層の記事を表示 -->
 <div class="post-list">
-  {% for post in site.posts %}
+  {% for post in paginator.posts %}
     <a href="{{ post.url }}" class="card">
       <div class="thumb">
         <img src="/assets/images/{% if post.thumbnail %}{{ post.thumbnail }}{% else %}default-thumb.jpg{% endif %}" alt="">
@@ -17,3 +18,33 @@ is_layout_page: true
     </a>
   {% endfor %}
 </div>
+
+<!-- 階層（ページ）移動ナビゲーション -->
+{% if paginator.total_pages > 1 %}
+<div style="text-align: center; margin-top: 40px; font-size: 14px; letter-spacing: 0.05em;">
+  
+  <!-- 上の階層（新しい記事）へ戻る -->
+  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | relative_url }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">
+      &laquo; 新しい記事（前の階層）
+    </a>
+  {% else %}
+    <span style="color: #ccc; margin: 0 15px;">&laquo; 新しい記事</span>
+  {% endif %}
+
+  <!-- 現在の階層位置の目安表示 (例: 1 / 3) -->
+  <span style="color: #666; font-weight: bold; margin: 0 10px;">
+    {{ paginator.page }} / {{ paginator.total_pages }}
+  </span>
+
+  <!-- 下の階層（古い記事）へ進む -->
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | relative_url }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">
+      古い記事（次の階層） &raquo;
+    </a>
+  {% else %}
+    <span style="color: #ccc; margin: 0 15px;">古い記事 &raquo;</span>
+  {% endif %}
+
+</div>
+{% endif %}
