@@ -26,7 +26,7 @@ is_layout_page: true
   <!-- 上の階層（新しい記事）へ戻る -->
   {% if paginator.previous_page %}
     <a href="{{ paginator.previous_page_path | relative_url }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">
-      &laquo; 新しい記事（前の階層）
+      &laquo; 新しい記事
     </a>
   {% else %}
     <span style="color: #ccc; margin: 0 15px;">&laquo; 新しい記事</span>
@@ -40,7 +40,7 @@ is_layout_page: true
   <!-- 下の階層（古い記事）へ進む -->
   {% if paginator.next_page %}
     <a href="{{ paginator.next_page_path | relative_url }}" style="text-decoration: none; color: #1a178f; font-weight: bold; margin: 0 15px;">
-      古い記事（次の階層） &raquo;
+      古い記事 &raquo;
     </a>
   {% else %}
     <span style="color: #ccc; margin: 0 15px;">古い記事 &raquo;</span>
